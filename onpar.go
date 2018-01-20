@@ -9,11 +9,22 @@ import (
 )
 
 var (
-	status       = []string{}
-	dateTime     string
-	batteryLevel string
-	volumeLevel  string
+	status         = []string{}
+	dateTime       string
+	batteryLevel   string
+	volumeLevel    string
+	keyboardLayout string
 )
+
+func updateKeyboardLayout(c chan string) {
+	time.Sleep(1 * time.Second)
+
+	response, _ := exec.Command("setxkbmap", "-query").Output()
+	levelPattern, _ := regexp.Compile("layout:\\s+[a-z]+")
+	layout := strings.TrimSpace(strings.Split(levelPattern.FindString(string(response)), ":")[1])
+
+	c <- fmt.Sprintf("KEY: %s", layout)
+}
 
 func updateVolumeLevel(c chan string) {
 	time.Sleep(1 * time.Second)
@@ -51,16 +62,19 @@ func main() {
 	dateTimeChannel := make(chan string)
 	batteryLevelChannel := make(chan string)
 	volumeLevelChannel := make(chan string)
+	keyboardLayoutChannel := make(chan string)
 
 	go updateDateTime(dateTimeChannel)
 	go updateBatteryLevel(batteryLevelChannel)
 	go updateVolumeLevel(volumeLevelChannel)
+	go updateKeyboardLayout(keyboardLayoutChannel)
 
 	for {
 		select {
 		case dateTime = <-dateTimeChannel:
 			status = []string{
 				"",
+				keyboardLayout,
 				volumeLevel,
 				batteryLevel,
 				dateTime,
@@ -69,6 +83,7 @@ func main() {
 		case batteryLevel = <-batteryLevelChannel:
 			status = []string{
 				"",
+				keyboardLayout,
 				volumeLevel,
 				batteryLevel,
 				dateTime,
@@ -77,11 +92,21 @@ func main() {
 		case volumeLevel = <-volumeLevelChannel:
 			status = []string{
 				"",
+				keyboardLayout,
 				volumeLevel,
 				batteryLevel,
 				dateTime,
 			}
 			go updateVolumeLevel(volumeLevelChannel)
+		case keyboardLayout = <-keyboardLayoutChannel:
+			status = []string{
+				"",
+				keyboardLayout,
+				volumeLevel,
+				batteryLevel,
+				dateTime,
+			}
+			go updateKeyboardLayout(keyboardLayoutChannel)
 		}
 
 		exec.Command("xsetroot", "-name", strings.Join(status, " ")).Run()
