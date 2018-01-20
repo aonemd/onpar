@@ -1,7 +1,7 @@
 onpar
 ---
 
-A dwm bar that is on par with other advanced bar such as i3blocks and polybar, ...
+A dwm bar that is on par with other advanced bars such as i3blocks and polybar
 
 ## Features
 
