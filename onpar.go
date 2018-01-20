@@ -38,7 +38,6 @@ func updateBatteryLevel(c chan string) {
 	power := powerPattern.FindString(string(response))
 	remainingTime := remainingTimePattern.FindString(string(response))
 
-	fmt.Println(remainingTime)
 	c <- fmt.Sprintf("BAT: %s (%s)", power, remainingTime)
 }
 
