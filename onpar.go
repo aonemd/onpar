@@ -12,7 +12,18 @@ var (
 	status       = []string{}
 	dateTime     string
 	batteryLevel string
+	volumeLevel  string
 )
+
+func updateVolumeLevel(c chan string) {
+	time.Sleep(1 * time.Second)
+
+	response, _ := exec.Command("amixer", "sget", "Master").Output()
+	levelPattern, _ := regexp.Compile("[0-9]+%")
+	level := levelPattern.FindString(string(response))
+
+	c <- fmt.Sprintf("VOL: %s", level)
+}
 
 func updateBatteryLevel(c chan string) {
 	time.Sleep(60 * time.Second)
@@ -39,15 +50,18 @@ func updateDateTime(c chan string) {
 func main() {
 	dateTimeChannel := make(chan string)
 	batteryLevelChannel := make(chan string)
+	volumeLevelChannel := make(chan string)
 
 	go updateDateTime(dateTimeChannel)
 	go updateBatteryLevel(batteryLevelChannel)
+	go updateVolumeLevel(volumeLevelChannel)
 
 	for {
 		select {
 		case dateTime = <-dateTimeChannel:
 			status = []string{
 				"",
+				volumeLevel,
 				batteryLevel,
 				dateTime,
 			}
@@ -55,10 +69,19 @@ func main() {
 		case batteryLevel = <-batteryLevelChannel:
 			status = []string{
 				"",
+				volumeLevel,
 				batteryLevel,
 				dateTime,
 			}
 			go updateBatteryLevel(batteryLevelChannel)
+		case volumeLevel = <-volumeLevelChannel:
+			status = []string{
+				"",
+				volumeLevel,
+				batteryLevel,
+				dateTime,
+			}
+			go updateVolumeLevel(volumeLevelChannel)
 		}
 
 		exec.Command("xsetroot", "-name", strings.Join(status, " ")).Run()
