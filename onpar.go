@@ -26,7 +26,7 @@ func updateVolumeLevel(c chan string) {
 }
 
 func updateBatteryLevel(c chan string) {
-	time.Sleep(60 * time.Second)
+	time.Sleep(1 * time.Second)
 
 	response, _ := exec.Command("acpi", "-b", "| grep", "Battery ", "0").Output()
 
@@ -43,7 +43,7 @@ func updateBatteryLevel(c chan string) {
 }
 
 func updateDateTime(c chan string) {
-	time.Sleep(60 * time.Second)
+	time.Sleep(1 * time.Second)
 
 	c <- time.Now().Local().Format("Mon Jan 02 03:04 PM")
 }
