@@ -1,7 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os/exec"
 	"regexp"
 	"strings"
@@ -14,6 +17,7 @@ var (
 	batteryLevel   string
 	volumeLevel    string
 	keyboardLayout string
+	darkSkyWeather string
 )
 
 func updateKeyboardLayout(c chan string) {
@@ -24,6 +28,24 @@ func updateKeyboardLayout(c chan string) {
 	layout := strings.TrimSpace(strings.Split(levelPattern.FindString(string(response)), ":")[1])
 
 	c <- fmt.Sprintf("KEY: %s", layout)
+}
+
+func updateDarkSkyWeather(c chan string) {
+	time.Sleep(10 * 60 * time.Second)
+
+	response, _ := http.Get("https://api.darksky.net/forecast/api_key/lon,lat?exclude=minutely,hourly,daily,alerts,flags&units=si")
+	data, _ := ioutil.ReadAll(response.Body)
+
+	var forecast interface{}
+	json.Unmarshal(data, &forecast)
+	forecastMap := forecast.(map[string]interface{})
+	currentForcast := forecastMap["currently"].(map[string]interface{})
+
+	summary := currentForcast["summary"]
+	temperature := currentForcast["temperature"]
+
+	fmt.Println(temperature)
+	c <- fmt.Sprintf("%s %v°C", summary, temperature)
 }
 
 func updateVolumeLevel(c chan string) {
@@ -63,11 +85,13 @@ func main() {
 	batteryLevelChannel := make(chan string)
 	volumeLevelChannel := make(chan string)
 	keyboardLayoutChannel := make(chan string)
+	darkSkyWeatherChannel := make(chan string)
 
 	go updateDateTime(dateTimeChannel)
 	go updateBatteryLevel(batteryLevelChannel)
 	go updateVolumeLevel(volumeLevelChannel)
 	go updateKeyboardLayout(keyboardLayoutChannel)
+	go updateDarkSkyWeather(darkSkyWeatherChannel)
 
 	for {
 		select {
@@ -75,6 +99,7 @@ func main() {
 			status = []string{
 				"",
 				keyboardLayout,
+				darkSkyWeather,
 				volumeLevel,
 				batteryLevel,
 				dateTime,
@@ -84,6 +109,7 @@ func main() {
 			status = []string{
 				"",
 				keyboardLayout,
+				darkSkyWeather,
 				volumeLevel,
 				batteryLevel,
 				dateTime,
@@ -93,6 +119,7 @@ func main() {
 			status = []string{
 				"",
 				keyboardLayout,
+				darkSkyWeather,
 				volumeLevel,
 				batteryLevel,
 				dateTime,
@@ -102,11 +129,22 @@ func main() {
 			status = []string{
 				"",
 				keyboardLayout,
+				darkSkyWeather,
 				volumeLevel,
 				batteryLevel,
 				dateTime,
 			}
 			go updateKeyboardLayout(keyboardLayoutChannel)
+		case darkSkyWeather = <-darkSkyWeatherChannel:
+			status = []string{
+				"",
+				keyboardLayout,
+				darkSkyWeather,
+				volumeLevel,
+				batteryLevel,
+				dateTime,
+			}
+			go updateDarkSkyWeather(darkSkyWeatherChannel)
 		}
 
 		exec.Command("xsetroot", "-name", strings.Join(status, " ")).Run()
