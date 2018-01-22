@@ -5,16 +5,18 @@ A dwm bar that is on par with other advanced bars such as i3blocks and polybar
 
 ## Features
 
-- Lightweight
-- Written in Go which is more maintainable than C
+- The ability to schedule running each function indepdently
+- The extensibility to write any script and use its STDOUT and show it on bar
 - Currently shows date and time, battery level, volume level, DarkSky weather forecast, and keyboard layout
-- Can schedule running each function indepdently
 
 ## Installation
 
-- You need a working go environment
-- `go build onpar.go` to build the binary
-- Add the binary to your path
+- You need a working Go environment
+- Build the Go components in `components/` using `go build component_name.go`
+- Add your own components
+- You need to use the full path to the components folder or add the components folder to your $PATH
+- `go build onpar.go` to build the main binary
+- Add the binary to your $PATH
 - Add the path to the binary in your `.xinitrc`
 
 ## TODOs
@@ -23,7 +25,7 @@ A dwm bar that is on par with other advanced bars such as i3blocks and polybar
 - [] Add colors
 - [] Add icons
 - [] Revisit the use of goroutines and the possibility to use alarm signals instead
-- [] Refactor the code
+- [X] Refactor the code
 
 ## License
 
