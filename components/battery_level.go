@@ -6,8 +6,12 @@ import (
 	"regexp"
 )
 
+const (
+	battery = "0"
+)
+
 func main() {
-	response, _ := exec.Command("acpi", "-b", " | ", "grep", "Battery ", "0").Output()
+	response, _ := exec.Command("acpi", "-b", " | ", "grep", "Battery ", battery).Output()
 
 	// statePattern, _ := regexp.Compile("Full|Charging|Discharging")
 	powerPattern, _ := regexp.Compile("[0-9]+%")
