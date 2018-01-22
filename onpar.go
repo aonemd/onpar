@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os/exec"
 	"strings"
 	"time"
@@ -23,7 +24,11 @@ func NewComponent(path string, interval int) *Component {
 
 func (c *Component) Run() {
 	time.Sleep(time.Duration(c.interval) * time.Second)
-	response, _ := exec.Command(c.path).Output()
+	response, err := exec.Command(c.path).Output()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	c.Channel <- strings.TrimSpace(string(response))
 }
 
