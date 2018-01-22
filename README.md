@@ -19,7 +19,7 @@ A dwm bar that is on par with other advanced bars such as i3blocks and polybar
 
 ## TODOs
 
-- [] Make it configurable
+- [X] Make it configurable
 - [] Add colors
 - [] Add icons
 - [] Revisit the use of goroutines and the possibility to use alarm signals instead

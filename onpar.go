@@ -1,119 +1,70 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"net/http"
 	"os/exec"
-	"regexp"
 	"strings"
 	"time"
 )
 
 var (
-	status         = []string{}
-	dateTime       string
-	batteryLevel   string
-	volumeLevel    string
-	keyboardLayout string
-	darkSkyWeather string
+	status = []string{}
 )
 
-func updateKeyboardLayout(c chan string) {
-	time.Sleep(1 * time.Second)
-
-	response, _ := exec.Command("setxkbmap", "-query").Output()
-	levelPattern, _ := regexp.Compile("layout:\\s+[a-z]+")
-	layout := strings.TrimSpace(strings.Split(levelPattern.FindString(string(response)), ":")[1])
-
-	c <- fmt.Sprintf("KEY: %s", layout)
+type Component struct {
+	path     string
+	Output   string
+	interval int
+	Channel  chan string
 }
 
-func updateDarkSkyWeather(c chan string) {
-	time.Sleep(10 * 60 * time.Second)
-
-	response, _ := http.Get("https://api.darksky.net/forecast/api_key/lon,lat?exclude=minutely,hourly,daily,alerts,flags&units=si")
-	data, _ := ioutil.ReadAll(response.Body)
-
-	var forecast interface{}
-	json.Unmarshal(data, &forecast)
-	forecastMap := forecast.(map[string]interface{})
-	currentForcast := forecastMap["currently"].(map[string]interface{})
-
-	summary := currentForcast["summary"]
-	temperature := currentForcast["temperature"]
-
-	fmt.Println(temperature)
-	c <- fmt.Sprintf("%s %v°C", summary, temperature)
+func NewComponent(path string, interval int) *Component {
+	return &Component{path: path, interval: interval, Channel: make(chan string)}
 }
 
-func updateVolumeLevel(c chan string) {
-	time.Sleep(1 * time.Second)
-
-	response, _ := exec.Command("amixer", "sget", "Master").Output()
-	levelPattern, _ := regexp.Compile("[0-9]+%")
-	level := levelPattern.FindString(string(response))
-
-	c <- fmt.Sprintf("VOL: %s", level)
-}
-
-func updateBatteryLevel(c chan string) {
-	time.Sleep(1 * time.Second)
-
-	response, _ := exec.Command("acpi", "-b", "| grep", "Battery ", "0").Output()
-
-	// statePattern, _ := regexp.Compile("Full|Charging|Discharging")
-	powerPattern, _ := regexp.Compile("[0-9]+%")
-	remainingTimePattern, _ := regexp.Compile("[01][0-9]:[0-9][0-9]")
-
-	// state := statePattern.FindString(string(response))
-	power := powerPattern.FindString(string(response))
-	remainingTime := remainingTimePattern.FindString(string(response))
-
-	c <- fmt.Sprintf("BAT: %s (%s)", power, remainingTime)
-}
-
-func updateDateTime(c chan string) {
-	time.Sleep(1 * time.Second)
-
-	c <- time.Now().Local().Format("Mon Jan 02 03:04 PM")
+func (c *Component) Run() {
+	time.Sleep(time.Duration(c.interval) * time.Second)
+	response, _ := exec.Command(c.path).Output()
+	c.Channel <- strings.TrimSpace(string(response))
 }
 
 func main() {
-	dateTimeChannel := make(chan string)
-	batteryLevelChannel := make(chan string)
-	volumeLevelChannel := make(chan string)
-	keyboardLayoutChannel := make(chan string)
-	darkSkyWeatherChannel := make(chan string)
+	dateTime := NewComponent("components/date_time.sh", 1)
+	batteryLevel := NewComponent("components/battery_level", 1)
+	volumeLevel := NewComponent("components/volume_level", 1)
+	darkSkyWeather := NewComponent("components/dark_sky_weather", 600)
+	keyboardLayout := NewComponent("components/keyboard_layout", 1)
+	// Initialize new components here ...
 
-	go updateDateTime(dateTimeChannel)
-	go updateBatteryLevel(batteryLevelChannel)
-	go updateVolumeLevel(volumeLevelChannel)
-	go updateKeyboardLayout(keyboardLayoutChannel)
-	go updateDarkSkyWeather(darkSkyWeatherChannel)
+	go dateTime.Run()
+	go batteryLevel.Run()
+	go volumeLevel.Run()
+	go darkSkyWeather.Run()
+	go keyboardLayout.Run()
+	// Call new components Run() here ...
 
 	for {
 		select {
-		case dateTime = <-dateTimeChannel:
-			go updateDateTime(dateTimeChannel)
-		case batteryLevel = <-batteryLevelChannel:
-			go updateBatteryLevel(batteryLevelChannel)
-		case volumeLevel = <-volumeLevelChannel:
-			go updateVolumeLevel(volumeLevelChannel)
-		case keyboardLayout = <-keyboardLayoutChannel:
-			go updateKeyboardLayout(keyboardLayoutChannel)
-		case darkSkyWeather = <-darkSkyWeatherChannel:
-			go updateDarkSkyWeather(darkSkyWeatherChannel)
+		case dateTime.Output = <-dateTime.Channel:
+			go dateTime.Run()
+		case darkSkyWeather.Output = <-darkSkyWeather.Channel:
+			go darkSkyWeather.Run()
+		case keyboardLayout.Output = <-keyboardLayout.Channel:
+			go keyboardLayout.Run()
+		case batteryLevel.Output = <-batteryLevel.Channel:
+			go batteryLevel.Run()
+		case volumeLevel.Output = <-volumeLevel.Channel:
+			go volumeLevel.Run()
+			// Call new components Run() here ...
 		}
 
 		status = []string{
 			"",
-			keyboardLayout,
-			darkSkyWeather,
-			volumeLevel,
-			batteryLevel,
-			dateTime,
+			// Add new components here ...
+			keyboardLayout.Output,
+			darkSkyWeather.Output,
+			volumeLevel.Output,
+			batteryLevel.Output,
+			dateTime.Output,
 		}
 
 		exec.Command("xsetroot", "-name", strings.Join(status, " ")).Run()
