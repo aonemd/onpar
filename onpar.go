@@ -96,55 +96,24 @@ func main() {
 	for {
 		select {
 		case dateTime = <-dateTimeChannel:
-			status = []string{
-				"",
-				keyboardLayout,
-				darkSkyWeather,
-				volumeLevel,
-				batteryLevel,
-				dateTime,
-			}
 			go updateDateTime(dateTimeChannel)
 		case batteryLevel = <-batteryLevelChannel:
-			status = []string{
-				"",
-				keyboardLayout,
-				darkSkyWeather,
-				volumeLevel,
-				batteryLevel,
-				dateTime,
-			}
 			go updateBatteryLevel(batteryLevelChannel)
 		case volumeLevel = <-volumeLevelChannel:
-			status = []string{
-				"",
-				keyboardLayout,
-				darkSkyWeather,
-				volumeLevel,
-				batteryLevel,
-				dateTime,
-			}
 			go updateVolumeLevel(volumeLevelChannel)
 		case keyboardLayout = <-keyboardLayoutChannel:
-			status = []string{
-				"",
-				keyboardLayout,
-				darkSkyWeather,
-				volumeLevel,
-				batteryLevel,
-				dateTime,
-			}
 			go updateKeyboardLayout(keyboardLayoutChannel)
 		case darkSkyWeather = <-darkSkyWeatherChannel:
-			status = []string{
-				"",
-				keyboardLayout,
-				darkSkyWeather,
-				volumeLevel,
-				batteryLevel,
-				dateTime,
-			}
 			go updateDarkSkyWeather(darkSkyWeatherChannel)
+		}
+
+		status = []string{
+			"",
+			keyboardLayout,
+			darkSkyWeather,
+			volumeLevel,
+			batteryLevel,
+			dateTime,
 		}
 
 		exec.Command("xsetroot", "-name", strings.Join(status, " ")).Run()
