@@ -5,7 +5,7 @@ A dwm bar that is on par with other advanced bars such as i3blocks and polybar
 
 ## Features
 
-- The ability to schedule running each function indepdently
+- The ability to schedule running each function independently
 - The extensibility to write any script and use its STDOUT and show it on the bar
 - Currently shows date and time, battery level, volume level, DarkSky weather forecast, and keyboard layout
 
