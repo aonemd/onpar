@@ -64,8 +64,8 @@ func main() {
 	}
 
 	if units == "si" {
-		fmt.Println(fmt.Sprintf("%s  %s %v %s", icon, summary, temperature, celsius_icon))
+		fmt.Println(fmt.Sprintf("%s %s %v %s", icon, summary, temperature, celsius_icon))
 	} else {
-		fmt.Println(fmt.Sprintf("%s  %s %v %s", icon, summary, temperature, fahrenheit_icon))
+		fmt.Println(fmt.Sprintf("%s %s %v %s", icon, summary, temperature, fahrenheit_icon))
 	}
 }
