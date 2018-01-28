@@ -11,7 +11,7 @@ A dwm bar that is on par with other advanced bars such as i3blocks and polybar
 
 ## Installation
 
-- You need a working Go environment
+- You need a working Go environment and [icons-in-terminal](https://github.com/sebastiencs/icons-in-terminal) to show the icons
 - Build the Go components in `components/` using `go build component_name.go`
 - Add your own components
 - You need to use the full path to the components folder or add the components folder to your $PATH
