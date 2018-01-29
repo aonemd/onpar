@@ -14,9 +14,10 @@ const (
 	critical_level = 10
 
 	charging_icon      = ""
-	full_icon          = " "
+	full_icon          = ""
 	three_quarter_icon = ""
 	half_icon          = ""
+	quarter_icon       = ""
 	empty_icon         = ""
 )
 
@@ -39,6 +40,8 @@ func main() {
 	case "Discharging":
 		if power <= critical_level {
 			icon = empty_icon
+		} else if power <= 25 {
+			icon = quarter_icon
 		} else if power <= 50 {
 			icon = half_icon
 		} else if power <= 75 {
