@@ -12,5 +12,5 @@ func main() {
 	layoutPattern, _ := regexp.Compile("layout:\\s+[a-z]+")
 	layout := strings.TrimSpace(strings.Split(layoutPattern.FindString(string(response)), ":")[1])
 
-	fmt.Println(fmt.Sprintf("%s", layout[:2]))
+	fmt.Println(fmt.Sprintf(" %s", layout[:2]))
 }
