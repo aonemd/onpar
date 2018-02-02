@@ -29,7 +29,11 @@ func main() {
 	remainingTimePattern, _ := regexp.Compile("[01][0-9]:[0-9][0-9]")
 
 	icon := iconPattern.FindString(string(response))
-	power, _ := strconv.Atoi(powerPattern.FindString(string(response))[:2])
+	powerString := powerPattern.FindString(string(response))
+	if last := len(powerString) - 1; last >= 0 && powerString[last] == '%' {
+		powerString = powerString[:last]
+	}
+	power, _ := strconv.Atoi(powerString)
 	remainingTime := remainingTimePattern.FindString(string(response))
 
 	switch icon {
