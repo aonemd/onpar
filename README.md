@@ -9,6 +9,8 @@ A dwm bar that is on par with other advanced bars such as i3blocks and polybar
 - The extensibility to write any script and use its STDOUT and show it on the bar
 - Currently shows date and time, battery level, volume level, DarkSky weather forecast, and keyboard layout
 
+![onpar screenshot](screenshot.png)
+
 ## Installation
 
 - You need a working Go environment and [FontAwesome](https://fontawesome.com) & [icons-in-terminal](https://github.com/sebastiencs/icons-in-terminal) to show the icons
