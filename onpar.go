@@ -38,6 +38,7 @@ func main() {
 	volumeLevel := NewComponent("components/volume_level", 1)
 	darkSkyWeather := NewComponent("components/dark_sky_weather", 600)
 	keyboardLayout := NewComponent("components/keyboard_layout", 1)
+	cmus := NewComponent("components/cmus", 1)
 	// Initialize new components here ...
 
 	go dateTime.Run()
@@ -45,6 +46,7 @@ func main() {
 	go volumeLevel.Run()
 	go darkSkyWeather.Run()
 	go keyboardLayout.Run()
+	go cmus.Run()
 	// Call new components Run() here ...
 
 	for {
@@ -59,12 +61,15 @@ func main() {
 			go batteryLevel.Run()
 		case volumeLevel.Output = <-volumeLevel.Channel:
 			go volumeLevel.Run()
+		case cmus.Output = <-cmus.Channel:
+			go cmus.Run()
 			// Call new components Run() here ...
 		}
 
 		status = []string{
 			"",
 			// Add new components here ...
+			cmus.Output,
 			keyboardLayout.Output,
 			darkSkyWeather.Output,
 			volumeLevel.Output,
