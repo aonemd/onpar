@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"math"
 	"net/http"
 )
 
@@ -38,7 +39,8 @@ func main() {
 
 	summary := currentForcast["summary"]
 	icon := currentForcast["icon"]
-	temperature := currentForcast["temperature"]
+	raw_temperature := currentForcast["temperature"].(float64)
+	temperature := math.Round(raw_temperature)
 
 	switch icon {
 	case "clear-day":
