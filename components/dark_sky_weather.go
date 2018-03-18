@@ -15,8 +15,8 @@ const (
 
 	clear_day_icon           = ""
 	clear_night_icon         = ""
-	partly_cloudy_day_icon   = ""
-	partly_cloudy_night_icon = ""
+	partly_cloudy_day_icon   = ""
+	partly_cloudy_night_icon = ""
 	cloudy_icon              = ""
 	rain_icon                = ""
 	sleet_icon               = ""
