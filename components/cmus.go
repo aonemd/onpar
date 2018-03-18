@@ -10,8 +10,8 @@ import (
 func main() {
 	response, _ := exec.Command("cmus-remote", "-Q").Output()
 
-	artistPattern, _ := regexp.Compile("tag artist [a-zA-Z0-9_ ]+")
-	titlePattern, _ := regexp.Compile("tag title [a-zA-Z0-9_ ]+")
+	artistPattern, _ := regexp.Compile("tag artist .*")
+	titlePattern, _ := regexp.Compile("tag title .*")
 
 	artist := strings.Trim(artistPattern.FindString(string(response)), "tag artist")
 	title := strings.Trim(titlePattern.FindString(string(response)), "tag title")
