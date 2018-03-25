@@ -17,6 +17,6 @@ func main() {
 	title := strings.Trim(titlePattern.FindString(string(response)), "tag title")
 
 	if artist != "" && title != "" {
-		fmt.Println(fmt.Sprintf("%s - %s", artist, title))
+		fmt.Println(fmt.Sprintf(" %s - %s", artist, title))
 	}
 }
