@@ -8,7 +8,10 @@ import (
 )
 
 func main() {
-	response, _ := exec.Command("cmus-remote", "-Q").Output()
+	response, err := exec.Command("cmus-remote", "-Q").Output()
+	if err != nil {
+		return
+	}
 
 	artistPattern, _ := regexp.Compile("tag artist .*")
 	titlePattern, _ := regexp.Compile("tag title .*")

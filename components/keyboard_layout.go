@@ -8,7 +8,11 @@ import (
 )
 
 func main() {
-	response, _ := exec.Command("setxkbmap", "-query").Output()
+	response, err := exec.Command("setxkbmap", "-query").Output()
+	if err != nil {
+		return
+	}
+
 	layoutPattern, _ := regexp.Compile("layout:\\s+[a-z]+")
 	layout := strings.TrimSpace(strings.Split(layoutPattern.FindString(string(response)), ":")[1])
 

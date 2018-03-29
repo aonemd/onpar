@@ -19,7 +19,10 @@ const (
 )
 
 func main() {
-	response, _ := exec.Command("amixer", "sget", "Master").Output()
+	response, err := exec.Command("amixer", "sget", "Master").Output()
+	if err != nil {
+		return
+	}
 
 	levelPattern, _ := regexp.Compile("[0-9]+%")
 	statusPattern, _ := regexp.Compile("\\[(on|off)\\]")

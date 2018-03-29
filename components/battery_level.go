@@ -22,7 +22,10 @@ const (
 )
 
 func main() {
-	response, _ := exec.Command("acpi", "-b", " | ", "grep", "Battery ", battery).Output()
+	response, err := exec.Command("acpi", "-b", " | ", "grep", "Battery ", battery).Output()
+	if err != nil {
+		return
+	}
 
 	iconPattern, _ := regexp.Compile("Full|Charging|Discharging")
 	powerPattern, _ := regexp.Compile("[0-9]+%")

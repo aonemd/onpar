@@ -29,7 +29,11 @@ const (
 
 func main() {
 	api_uri := fmt.Sprintf("https://api.darksky.net/forecast/%s/%s?exclude=minutely,hourly,daily,alerts,flags&units=%s", api_key, lon_lat, units)
-	response, _ := http.Get(api_uri)
+	response, err := http.Get(api_uri)
+	if err != nil {
+		return
+	}
+
 	data, _ := ioutil.ReadAll(response.Body)
 
 	var forecast interface{}
