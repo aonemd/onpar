@@ -24,10 +24,12 @@ A dwm bar that is on par with other advanced bars such as i3blocks and polybar
 ## TODOs
 
 - [X] Make it configurable
-- [] Add colors
+- [] Add support for colors
 - [X] Add icons
 - [] Revisit the use of goroutines and the possibility to use alarm signals instead
 - [X] Refactor the code
+- [] Add a way to log runtime errors
+- [] Add a config file
 
 ## License
 
