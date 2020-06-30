@@ -33,48 +33,48 @@ func (c *Component) Run() {
 }
 
 func main() {
-	dateTime := NewComponent("components/date_time.sh", 1)
-	batteryLevel := NewComponent("components/battery_level", 1)
-	volumeLevel := NewComponent("components/volume_level", 1)
-	darkSkyWeather := NewComponent("components/dark_sky_weather", 600)
-	keyboardLayout := NewComponent("components/keyboard_layout", 1)
-	cmus := NewComponent("components/cmus", 1)
+	dateTimeComponent := NewComponent("date_time_component.sh", 1)
+	batteryLevelComponent := NewComponent("battery_level_component", 1)
+	volumeLevelComponent := NewComponent("volume_level_component", 1)
+	darkSkyWeatherComponent := NewComponent("dark_sky_weather_component", 600)
+	keyboardLayoutComponent := NewComponent("keyboard_layout_component", 1)
+	musicComponent := NewComponent("music_component", 2)
 	// Initialize new components here ...
 
-	go dateTime.Run()
-	go batteryLevel.Run()
-	go volumeLevel.Run()
-	go darkSkyWeather.Run()
-	go keyboardLayout.Run()
-	go cmus.Run()
+	go dateTimeComponent.Run()
+	go batteryLevelComponent.Run()
+	go volumeLevelComponent.Run()
+	go darkSkyWeatherComponent.Run()
+	go keyboardLayoutComponent.Run()
+	go musicComponent.Run()
 	// Call new components Run() here ...
 
 	for {
 		select {
-		case dateTime.Output = <-dateTime.Channel:
-			go dateTime.Run()
-		case darkSkyWeather.Output = <-darkSkyWeather.Channel:
-			go darkSkyWeather.Run()
-		case keyboardLayout.Output = <-keyboardLayout.Channel:
-			go keyboardLayout.Run()
-		case batteryLevel.Output = <-batteryLevel.Channel:
-			go batteryLevel.Run()
-		case volumeLevel.Output = <-volumeLevel.Channel:
-			go volumeLevel.Run()
-		case cmus.Output = <-cmus.Channel:
-			go cmus.Run()
+		case dateTimeComponent.Output = <-dateTimeComponent.Channel:
+			go dateTimeComponent.Run()
+		case darkSkyWeatherComponent.Output = <-darkSkyWeatherComponent.Channel:
+			go darkSkyWeatherComponent.Run()
+		case keyboardLayoutComponent.Output = <-keyboardLayoutComponent.Channel:
+			go keyboardLayoutComponent.Run()
+		case batteryLevelComponent.Output = <-batteryLevelComponent.Channel:
+			go batteryLevelComponent.Run()
+		case volumeLevelComponent.Output = <-volumeLevelComponent.Channel:
+			go volumeLevelComponent.Run()
+		case musicComponent.Output = <-musicComponent.Channel:
+			go musicComponent.Run()
 			// Call new components Run() here ...
 		}
 
 		status = []string{
 			"",
 			// Add new components here ...
-			cmus.Output,
-			keyboardLayout.Output,
-			darkSkyWeather.Output,
-			volumeLevel.Output,
-			batteryLevel.Output,
-			dateTime.Output,
+			musicComponent.Output,
+			keyboardLayoutComponent.Output,
+			darkSkyWeatherComponent.Output,
+			volumeLevelComponent.Output,
+			batteryLevelComponent.Output,
+			dateTimeComponent.Output,
 		}
 
 		exec.Command("xsetroot", "-name", strings.Join(status, " ")).Run()
