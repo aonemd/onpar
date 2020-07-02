@@ -7,19 +7,30 @@ A dwm bar that is on par with other advanced bars such as i3blocks and polybar
 
 - The ability to schedule running each function independently
 - The extensibility to write any script and use its STDOUT and show it on the bar
-- Currently shows date and time, battery level, volume level, DarkSky weather forecast, and keyboard layout
+- Currently shows date and time, battery level, volume level, DarkSky weather
+  forecast, keyboard layout, current music track
 
 ![onpar screenshot](screenshot.png)
 
+## Requirements
+
+- [Go installation](http://golang.org/)
+- [FontAwesome](https://fontawesome.com)
+- [icons-in-terminal](https://github.com/sebastiencs/icons-in-terminal)
+
 ## Installation
 
-- You need a working Go environment and [FontAwesome](https://fontawesome.com) & [icons-in-terminal](https://github.com/sebastiencs/icons-in-terminal) to show the icons
-- Build the Go components in `components/` using `go build component_name.go`
-- Add your own components
-- You need to use the full path to the components folder or add the components folder to your $PATH
-- `go build onpar.go` to build the main binary
-- Add the binary to your $PATH
-- Add the path to the binary in your `.xinitrc`
+- Run `sudo make install` to build the components into a `bin/` directory and
+  to copy the executable `onpar` into `/usr/local/bin`
+- Add the `bin/` directory to your $PATH
+- Run `make run` to run the executable
+
+## Customization
+
+- To start `onpar` with system startup, Add `onpar&` to your `.xinitrc` or to
+  your system's startup config file
+- To add more components, add them to `components` directory, and call them in
+  the code of `onpar`, then redo the installation steps
 
 ## TODOs
 
